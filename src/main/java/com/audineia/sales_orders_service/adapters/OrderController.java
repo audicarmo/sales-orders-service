@@ -25,4 +25,10 @@ public class OrderController {
         orderRepository.save(order);
         return ResponseEntity.ok(order);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> searchOrder(@PathVariable Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
