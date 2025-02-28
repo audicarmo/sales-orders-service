@@ -3,6 +3,7 @@ package com.audineia.sales_orders_service.adapters;
 import com.audineia.sales_orders_service.domain.Order;
 import com.audineia.sales_orders_service.infrastructure.OrderRepository;
 import com.audineia.sales_orders_service.service.OrderService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "order", key = "#id")
     public ResponseEntity<Order> searchOrder(@PathVariable Long id) {
         Optional<Order> order = orderRepository.findById(id);
         return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
