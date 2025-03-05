@@ -1,12 +1,13 @@
 package com.audineia.sales_orders_service.adapters;
 
-import com.audineia.sales_orders_service.domain.Order;
-import com.audineia.sales_orders_service.infrastructure.OrderRepository;
+import com.audineia.sales_orders_service.entity.Order;
+import com.audineia.sales_orders_service.repository.OrderRepository;
 import com.audineia.sales_orders_service.service.OrderService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,8 +24,16 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         orderService.processRequest(order, false);
-        orderRepository.save(order);
         return ResponseEntity.ok(order);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<String> createOrdersInBatch(@RequestBody List<Order> orders) {
+        for (Order order : orders) {
+            order.setStatus("Created");
+            orderRepository.save(order);
+        }
+        return ResponseEntity.ok("Batch orders received and will be processed.");
     }
 
     @GetMapping("/{id}")
@@ -32,5 +41,10 @@ public class OrderController {
     public ResponseEntity<Order> searchOrder(@PathVariable Long id) {
         Optional<Order> order = orderRepository.findById(id);
         return order.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Order>> getOrdersByStatus(@RequestParam String status) {
+        return ResponseEntity.ok(orderRepository.findByStatus(status));
     }
 }
