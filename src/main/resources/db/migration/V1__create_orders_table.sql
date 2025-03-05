@@ -1,0 +1,7 @@
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    tax DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
