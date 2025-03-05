@@ -1,12 +1,17 @@
 package com.audineia.sales_orders_service.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "order_items")
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class OrderItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,58 +27,39 @@ public class OrderItem {
     private int quantity;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
-
-    public OrderItem() {}
-
-    public OrderItem(Order order, Long productId, int quantity, BigDecimal price) {
-        this.order = order;
-        this.productId = productId;
-        this.quantity = quantity;
-        this.price = price;
-    }
+    private Double value;
 
     public BigDecimal calculateSubtotal() {
-        return price.multiply(BigDecimal.valueOf(quantity));
+        return BigDecimal.valueOf(value)
+                .multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Order getOrder() {
         return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
     public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public Double getValue() {
+        return value;
+    }
+
+    public OrderItem(Long id, Order order, Long productId,
+                     int quantity, Double value) {
+        this.id = id;
+        this.order = order;
+        this.productId = productId;
         this.quantity = quantity;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+        this.value = value;
     }
 }
