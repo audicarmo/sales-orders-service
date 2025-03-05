@@ -1,49 +1,65 @@
 package com.audineia.sales_orders_service.service;
 
+import com.audineia.sales_orders_service.dto.request.OrderRequestDTO;
+import com.audineia.sales_orders_service.dto.response.OrderResponseDTO;
 import com.audineia.sales_orders_service.entity.Order;
+import com.audineia.sales_orders_service.entity.OrderItem;
+import com.audineia.sales_orders_service.enums.OrderStatus;
+import com.audineia.sales_orders_service.kafka.OrderProducer;
 import com.audineia.sales_orders_service.repository.OrderRepository;
+import com.audineia.sales_orders_service.validation.RequestValidator;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
-    private final KafkaTemplate<String, Order> kafkaTemplate;
     private final OrderRepository orderRepository;
+    private final RequestValidator requestValidator;
+    private final OrderProducer orderProducer;
 
-    public OrderService(KafkaTemplate<String, Order> kafkaTemplate, OrderRepository orderRepository) {
-        this.kafkaTemplate = kafkaTemplate;
+    public OrderService(OrderRepository orderRepository, RequestValidator requestValidator,
+                        OrderProducer orderProducer) {
         this.orderRepository = orderRepository;
+        this.requestValidator = requestValidator;
+        this.orderProducer = orderProducer;
     }
 
-    public void processRequest(Order order, boolean taxReform) {
-        BigDecimal fee = taxReform ? new BigDecimal("0.2") : new BigDecimal("0.3");
-        order.applyTax(fee);
-        orderRepository.save(order);
-        kafkaTemplate.send("orders-topic", order);
-        logger.info("Request sent to Kafka: {}", order);
-    }
+    @Transactional
+    public OrderResponseDTO processOrder(OrderRequestDTO orderRequestDTO) {
+        requestValidator.validateOrder(orderRequestDTO);
 
-    @KafkaListener(topics = "orders-topic", groupId = "order-group")
-    public void consumeOrder(Order order) {
-        logger.info("Request received from Kafka: {}", order);
-        order.setStatus("Processed");
-        orderRepository.save(order);
-    }
-
-    @Scheduled(fixedRate = 60000)
-    public void batchProcessOrders() {
-        List<Order> pendingOrders = orderRepository.findByStatus("Created");
-        for (Order order : pendingOrders) {
-            processRequest(order, false);
+        Optional<Order> existingOrder = orderRepository.findByOrderId(orderRequestDTO.getOrderId());
+        if (existingOrder.isPresent()) {
+            throw new IllegalArgumentException("Order already exists.");
         }
-        logger.info("Processed batch of {} orders.", pendingOrders.size());
+
+        List<OrderItem> items = Optional.ofNullable(orderRequestDTO.getItems())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(itemRequest -> new OrderItem(null, null, itemRequest.getProductId(),
+                        itemRequest.getQuantity(), itemRequest.getValue()))
+                .collect(Collectors.toList());
+
+        Order order = new Order(
+                orderRequestDTO.getOrderId(),
+                orderRequestDTO.getCustomerId(),
+                items,
+                0.0,
+                OrderStatus.CREATED
+        );
+
+        orderRepository.save(order);
+        orderProducer.sendOrderCreatedEvent(order);
+        logger.info("Order published to Kafka: {}", order);
+
+        return OrderResponseDTO.fromEntity(order);
     }
 }
