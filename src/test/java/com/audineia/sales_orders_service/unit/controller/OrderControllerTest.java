@@ -1,4 +1,4 @@
-package com.audineia.sales_orders_service.unit;
+package com.audineia.sales_orders_service.unit.controller;
 
 import com.audineia.sales_orders_service.controller.OrderController;
 import com.audineia.sales_orders_service.dto.request.OrderItemRequestDTO;

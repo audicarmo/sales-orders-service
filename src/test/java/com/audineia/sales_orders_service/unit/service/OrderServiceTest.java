@@ -1,4 +1,4 @@
-package com.audineia.sales_orders_service.unit;
+package com.audineia.sales_orders_service.unit.service;
 
 import com.audineia.sales_orders_service.dto.request.OrderItemRequestDTO;
 import com.audineia.sales_orders_service.dto.request.OrderRequestDTO;
@@ -62,7 +62,8 @@ public class OrderServiceTest {
     void shouldThrowExceptionForDuplicateOrder() {
         when(orderRepository.findByOrderId(anyLong())).thenReturn(Optional.of(new Order()));
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> orderService.processOrder(orderRequest));
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> orderService.processOrder(orderRequest));
 
         assertEquals("Order already exists.", exception.getMessage());
     }

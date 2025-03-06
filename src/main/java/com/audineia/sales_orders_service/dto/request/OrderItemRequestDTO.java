@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class OrderItemRequestDTO {
     private Long productId;
     private Integer quantity;
@@ -24,5 +23,11 @@ public class OrderItemRequestDTO {
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    public OrderItemRequestDTO(Long productId, Integer quantity, BigDecimal value) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.value = value;
     }
 }
