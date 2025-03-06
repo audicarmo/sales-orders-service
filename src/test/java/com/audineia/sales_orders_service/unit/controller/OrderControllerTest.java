@@ -3,7 +3,7 @@ package com.audineia.sales_orders_service.unit.controller;
 import com.audineia.sales_orders_service.controller.OrderController;
 import com.audineia.sales_orders_service.dto.request.OrderItemRequestDTO;
 import com.audineia.sales_orders_service.dto.request.OrderRequestDTO;
-import com.audineia.sales_orders_service.dto.response.OrderResponseDTO;
+import com.audineia.sales_orders_service.dto.response.OrderResponseProcessDTO;
 import com.audineia.sales_orders_service.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,25 +29,25 @@ public class OrderControllerTest {
     @Mock
     private OrderService orderService;
     private OrderRequestDTO orderRequest;
-    private OrderResponseDTO orderResponse;
+    private OrderResponseProcessDTO orderResponseProcessDTO;
 
     @BeforeEach
     void setUp() {
         orderRequest = new OrderRequestDTO(1L, 123L,
                 List.of(new OrderItemRequestDTO(101L, 2, BigDecimal.ONE)));
-        orderResponse = new OrderResponseDTO(1L, 1L, 123L,
+        orderResponseProcessDTO = new OrderResponseProcessDTO(1L, 1L, 123L,
                 BigDecimal.ONE, com.audineia.sales_orders_service.enums.OrderStatus.CREATED, List.of());
     }
 
     @Test
     void shouldCreateOrderSuccessfully() {
-        when(orderService.processOrder(any(OrderRequestDTO.class))).thenReturn(orderResponse);
+        when(orderService.processOrder(any(OrderRequestDTO.class))).thenReturn(orderResponseProcessDTO);
 
-        ResponseEntity<OrderResponseDTO> response = orderController.createOrder(orderRequest);
+        ResponseEntity<OrderResponseProcessDTO> response = orderController.createOrder(orderRequest);
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals(orderResponse, response.getBody());
+        assertEquals(orderResponseProcessDTO, response.getBody());
     }
 
     @Test

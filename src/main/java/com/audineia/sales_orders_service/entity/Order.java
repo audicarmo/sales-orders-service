@@ -9,9 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders", uniqueConstraints = @UniqueConstraint(columnNames = "orderId"))
-@Data
-@Getter
-@Setter
 @AllArgsConstructor
 public class Order {
     @Id
@@ -82,5 +79,25 @@ public class Order {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
     }
 }

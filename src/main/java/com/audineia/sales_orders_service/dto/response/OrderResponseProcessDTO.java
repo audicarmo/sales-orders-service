@@ -1,9 +1,11 @@
 package com.audineia.sales_orders_service.dto.response;
 
-import com.audineia.sales_orders_service.dto.response.OrderItemResponseDTO;
 import com.audineia.sales_orders_service.entity.Order;
 import com.audineia.sales_orders_service.enums.OrderStatus;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,11 +15,10 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderResponseDTO {
+public class OrderResponseProcessDTO {
     private Long id;
     private Long orderId;
     private Long customerId;
-    private BigDecimal tax;
     private OrderStatus status;
     private List<OrderItemResponseDTO> items;
 
@@ -33,10 +34,6 @@ public class OrderResponseDTO {
         return customerId;
     }
 
-    public BigDecimal getTax() {
-        return tax;
-    }
-
     public OrderStatus getStatus() {
         return status;
     }
@@ -45,13 +42,25 @@ public class OrderResponseDTO {
         return items;
     }
 
-    public OrderResponseDTO(Long id, Long orderId, Long customerId, BigDecimal tax,
-                            OrderStatus status, List<OrderItemResponseDTO> items) {
+    public OrderResponseProcessDTO(Long id, Long orderId, Long customerId, BigDecimal tax,
+                                   OrderStatus status, List<OrderItemResponseDTO> items) {
         this.id = id;
         this.orderId = orderId;
         this.customerId = customerId;
-        this.tax = tax;
         this.status = status;
         this.items = items;
+    }
+
+    public static OrderResponseProcessDTO fromEntity(Order order) {
+        return new OrderResponseProcessDTO(
+                order.getId(),
+                order.getOrderId(),
+                order.getCustomerId(),
+                order.getTax(),
+                order.getStatus(),
+                order.getItems().stream()
+                        .map(OrderItemResponseDTO::fromEntity)
+                        .collect(Collectors.toList())
+        );
     }
 }

@@ -8,9 +8,6 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "order_items")
 @Data
-@Getter
-@Setter
-@NoArgsConstructor
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +48,29 @@ public class OrderItem {
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
+
+    public OrderItem() {
     }
 
     public OrderItem(Long id, Order order, Long productId,
