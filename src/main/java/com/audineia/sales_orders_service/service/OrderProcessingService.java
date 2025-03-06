@@ -3,6 +3,7 @@ package com.audineia.sales_orders_service.service;
 import com.audineia.sales_orders_service.entity.Order;
 import com.audineia.sales_orders_service.enums.OrderStatus;
 import com.audineia.sales_orders_service.repository.OrderRepository;
+import com.audineia.sales_orders_service.util.Constants;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ public class OrderProcessingService {
     private static final Logger logger = LoggerFactory.getLogger(OrderProcessingService.class);
     private final OrderRepository orderRepository;
     private final StringRedisTemplate redisTemplate;
-    private static final String TAX_REFORM_KEY = "taxReformActive";
 
     public OrderProcessingService(OrderRepository orderRepository, StringRedisTemplate redisTemplate) {
         this.orderRepository = orderRepository;
@@ -43,7 +43,7 @@ public class OrderProcessingService {
     }
 
     private boolean isTaxReformActive() {
-        return Optional.ofNullable(redisTemplate.opsForValue().get(TAX_REFORM_KEY))
+        return Optional.ofNullable(redisTemplate.opsForValue().get(Constants.TAX_REFORM_KEY))
                 .map(Boolean::parseBoolean)
                 .orElse(false);
     }
