@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Order {
     @Id
@@ -54,6 +53,9 @@ public class Order {
         this.status = status;
     }
 
+    public Order() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -76,5 +78,9 @@ public class Order {
 
     public OrderStatus getStatus() {
         return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }

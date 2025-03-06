@@ -58,9 +58,13 @@ public class OrderService {
         );
 
         orderRepository.save(order);
-        orderProducer.sendOrderCreatedEvent(order);
+        sendOrderCreatedEvent(order);
         logger.info("Order published to Kafka: {}", order);
 
         return OrderResponseDTO.fromEntity(order);
+    }
+
+    protected void sendOrderCreatedEvent(Order order) {
+        orderProducer.sendOrderCreatedEvent(order);
     }
 }
