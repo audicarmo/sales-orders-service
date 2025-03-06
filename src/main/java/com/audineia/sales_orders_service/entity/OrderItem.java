@@ -27,11 +27,10 @@ public class OrderItem {
     private int quantity;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private Double value;
+    private BigDecimal value;
 
     public BigDecimal calculateSubtotal() {
-        return BigDecimal.valueOf(value)
-                .multiply(BigDecimal.valueOf(quantity));
+        return value.multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getId() {
@@ -50,12 +49,12 @@ public class OrderItem {
         return quantity;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
     public OrderItem(Long id, Order order, Long productId,
-                     int quantity, Double value) {
+                     int quantity, BigDecimal value) {
         this.id = id;
         this.order = order;
         this.productId = productId;
