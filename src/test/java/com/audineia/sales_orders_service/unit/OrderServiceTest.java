@@ -41,11 +41,11 @@ public class OrderServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        orderRequest = new OrderRequestDTO(1L, 123L, List.of(new OrderItemRequestDTO(101L, 2, BigDecimal.ONE)));
+        orderRequest = new OrderRequestDTO(1L, 123L,
+                List.of(new OrderItemRequestDTO(101L, 2, BigDecimal.ONE)));
 
         orderService = new OrderService(orderRepository, requestValidator, orderProducer);
     }
-
 
     @Test
     void shouldProcessOrderSuccessfully() {
