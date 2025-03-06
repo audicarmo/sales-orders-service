@@ -30,7 +30,7 @@ public class Order {
     private List<OrderItem> items;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private Double tax;
+    private BigDecimal tax;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -41,13 +41,12 @@ public class Order {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public void applyTax(double taxRate) {
-        this.tax = calculateTotal().multiply(
-                BigDecimal.valueOf(taxRate)).doubleValue();
+    public void applyTax(BigDecimal taxRate) {
+        this.tax = calculateTotal().multiply(taxRate);
     }
 
     public Order(Long orderId, Long customerId, List<OrderItem> items,
-                 Double tax, OrderStatus status) {
+                 BigDecimal tax, OrderStatus status) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.items = items;
@@ -71,15 +70,11 @@ public class Order {
         return items;
     }
 
-    public Double getTax() {
+    public BigDecimal getTax() {
         return tax;
     }
 
     public OrderStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
     }
 }

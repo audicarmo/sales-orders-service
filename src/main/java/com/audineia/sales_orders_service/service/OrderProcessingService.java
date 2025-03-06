@@ -30,7 +30,7 @@ public class OrderProcessingService {
             logger.info("Processing order: {}", order.getOrderId());
 
             BigDecimal taxRate = isTaxReformActive() ? BigDecimal.valueOf(0.2) : BigDecimal.valueOf(0.3);
-            order.applyTax(taxRate.doubleValue());
+            order.applyTax(taxRate);
             order.setStatus(OrderStatus.PROCESSING);
 
             orderRepository.save(order);

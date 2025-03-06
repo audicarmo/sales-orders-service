@@ -5,6 +5,7 @@ import com.audineia.sales_orders_service.entity.Order;
 import com.audineia.sales_orders_service.enums.OrderStatus;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ public class OrderResponseDTO {
     private Long id;
     private Long orderId;
     private Long customerId;
-    private Double tax;
+    private BigDecimal tax;
     private OrderStatus status;
     private List<OrderItemResponseDTO> items;
 
@@ -32,7 +33,7 @@ public class OrderResponseDTO {
         return customerId;
     }
 
-    public Double getTax() {
+    public BigDecimal getTax() {
         return tax;
     }
 
@@ -44,7 +45,7 @@ public class OrderResponseDTO {
         return items;
     }
 
-    public OrderResponseDTO(Long id, Long orderId, Long customerId, Double tax,
+    public OrderResponseDTO(Long id, Long orderId, Long customerId, BigDecimal tax,
                             OrderStatus status, List<OrderItemResponseDTO> items) {
         this.id = id;
         this.orderId = orderId;
