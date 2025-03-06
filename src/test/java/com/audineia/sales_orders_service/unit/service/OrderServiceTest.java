@@ -3,6 +3,7 @@ package com.audineia.sales_orders_service.unit.service;
 import com.audineia.sales_orders_service.dto.request.OrderItemRequestDTO;
 import com.audineia.sales_orders_service.dto.request.OrderRequestDTO;
 import com.audineia.sales_orders_service.dto.response.OrderResponseDTO;
+import com.audineia.sales_orders_service.dto.response.OrderResponseProcessDTO;
 import com.audineia.sales_orders_service.enums.OrderStatus;
 import com.audineia.sales_orders_service.entity.Order;
 import com.audineia.sales_orders_service.kafka.OrderProducer;
@@ -52,7 +53,7 @@ public class OrderServiceTest {
         when(orderRepository.findByOrderId(anyLong())).thenReturn(Optional.empty());
         when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        OrderResponseDTO response = orderService.processOrder(orderRequest);
+        OrderResponseProcessDTO response = orderService.processOrder(orderRequest);
 
         assertNotNull(response);
         assertEquals(OrderStatus.CREATED.name(), response.getStatus().name());
@@ -74,7 +75,7 @@ public class OrderServiceTest {
         when(orderRepository.findByOrderId(anyLong())).thenReturn(Optional.empty());
         when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        OrderResponseDTO response = orderService.processOrder(orderRequest);
+        OrderResponseProcessDTO response = orderService.processOrder(orderRequest);
 
         assertNotNull(response);
         assertEquals(OrderStatus.CREATED.name(), response.getStatus().name());

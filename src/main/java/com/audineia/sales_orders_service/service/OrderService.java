@@ -1,7 +1,7 @@
 package com.audineia.sales_orders_service.service;
 
 import com.audineia.sales_orders_service.dto.request.OrderRequestDTO;
-import com.audineia.sales_orders_service.dto.response.OrderResponseDTO;
+import com.audineia.sales_orders_service.dto.response.OrderResponseProcessDTO;
 import com.audineia.sales_orders_service.entity.Order;
 import com.audineia.sales_orders_service.entity.OrderItem;
 import com.audineia.sales_orders_service.enums.OrderStatus;
@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -34,34 +35,45 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDTO processOrder(OrderRequestDTO orderRequestDTO) {
+    public OrderResponseProcessDTO processOrder(OrderRequestDTO orderRequestDTO) {
         requestValidator.validateOrder(orderRequestDTO);
+        ensureOrderDoesNotExist(orderRequestDTO.getOrderId());
 
-        Optional<Order> existingOrder = orderRepository.findByOrderId(orderRequestDTO.getOrderId());
-        if (existingOrder.isPresent()) {
+        Order savedOrder = saveInitialOrder(orderRequestDTO);
+        List<OrderItem> items = createOrderItems(orderRequestDTO, savedOrder);
+        savedOrder.setItems(items);
+        orderRepository.save(savedOrder);
+
+        sendOrderCreatedEvent(savedOrder);
+        logger.info("Order published to Kafka: {}", savedOrder);
+
+        return OrderResponseProcessDTO.fromEntity(savedOrder);
+    }
+
+    private void ensureOrderDoesNotExist(Long orderId) {
+        if (orderRepository.findByOrderId(orderId).isPresent()) {
             throw new IllegalArgumentException("Order already exists.");
         }
+    }
 
-        List<OrderItem> items = Optional.ofNullable(orderRequestDTO.getItems())
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(itemRequest -> new OrderItem(null, null, itemRequest.getProductId(),
-                        itemRequest.getQuantity(), itemRequest.getValue()))
-                .collect(Collectors.toList());
-
+    private Order saveInitialOrder(OrderRequestDTO orderRequestDTO) {
         Order order = new Order(
                 orderRequestDTO.getOrderId(),
                 orderRequestDTO.getCustomerId(),
-                items,
+                Collections.emptyList(),
                 BigDecimal.ZERO,
                 OrderStatus.CREATED
         );
+        return orderRepository.save(order);
+    }
 
-        orderRepository.save(order);
-        sendOrderCreatedEvent(order);
-        logger.info("Order published to Kafka: {}", order);
-
-        return OrderResponseDTO.fromEntity(order);
+    private List<OrderItem> createOrderItems(OrderRequestDTO orderRequestDTO, Order order) {
+        return Optional.ofNullable(orderRequestDTO.getItems())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(itemRequest -> new OrderItem(null, order, itemRequest.getProductId(),
+                        itemRequest.getQuantity(), itemRequest.getValue()))
+                .collect(Collectors.toList());
     }
 
     protected void sendOrderCreatedEvent(Order order) {
