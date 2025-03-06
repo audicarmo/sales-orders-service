@@ -6,7 +6,6 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class OrderRequestDTO {
     private Long orderId;
     private Long customerId;
@@ -22,5 +21,11 @@ public class OrderRequestDTO {
 
     public Long getCustomerId() {
         return customerId;
+    }
+
+    public OrderRequestDTO(Long orderId, Long customerId, List<OrderItemRequestDTO> items) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.items = items;
     }
 }

@@ -9,10 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders", uniqueConstraints = @UniqueConstraint(columnNames = "orderId"))
-@Data
-@Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Order {
     @Id
@@ -30,7 +26,7 @@ public class Order {
     private List<OrderItem> items;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private Double tax;
+    private BigDecimal tax;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -41,18 +37,20 @@ public class Order {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public void applyTax(double taxRate) {
-        this.tax = calculateTotal().multiply(
-                BigDecimal.valueOf(taxRate)).doubleValue();
+    public void applyTax(BigDecimal taxRate) {
+        this.tax = calculateTotal().multiply(taxRate);
     }
 
     public Order(Long orderId, Long customerId, List<OrderItem> items,
-                 Double tax, OrderStatus status) {
+                 BigDecimal tax, OrderStatus status) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.items = items;
         this.tax = tax;
         this.status = status;
+    }
+
+    public Order() {
     }
 
     public Long getId() {
@@ -71,7 +69,7 @@ public class Order {
         return items;
     }
 
-    public Double getTax() {
+    public BigDecimal getTax() {
         return tax;
     }
 
@@ -81,5 +79,25 @@ public class Order {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
     }
 }

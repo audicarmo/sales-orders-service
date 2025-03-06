@@ -3,6 +3,8 @@ package com.audineia.sales_orders_service.dto.response;
 import com.audineia.sales_orders_service.entity.OrderItem;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Data
 @Getter
 @Setter
@@ -10,11 +12,11 @@ import lombok.*;
 public class OrderItemResponseDTO {
     private Long productId;
     private int quantity;
-    private Double value;
-    private Double subtotal;
+    private BigDecimal value;
+    private BigDecimal subtotal;
 
     public OrderItemResponseDTO(Long productId, int quantity,
-                                Double value, Double subtotal) {
+                                BigDecimal value, BigDecimal subtotal) {
         this.productId = productId;
         this.quantity = quantity;
         this.value = value;
@@ -29,11 +31,11 @@ public class OrderItemResponseDTO {
         return quantity;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public Double getSubtotal() {
+    public BigDecimal getSubtotal() {
         return subtotal;
     }
 
@@ -42,7 +44,7 @@ public class OrderItemResponseDTO {
                 item.getProductId(),
                 item.getQuantity(),
                 item.getValue(),
-                item.calculateSubtotal().doubleValue()
+                item.calculateSubtotal()
         );
     }
 }

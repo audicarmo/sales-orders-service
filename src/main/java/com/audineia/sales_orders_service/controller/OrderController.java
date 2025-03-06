@@ -1,6 +1,6 @@
 package com.audineia.sales_orders_service.controller;
 import com.audineia.sales_orders_service.dto.request.OrderRequestDTO;
-import com.audineia.sales_orders_service.dto.response.OrderResponseDTO;
+import com.audineia.sales_orders_service.dto.response.OrderResponseProcessDTO;
 import com.audineia.sales_orders_service.entity.Order;
 import com.audineia.sales_orders_service.enums.OrderStatus;
 import com.audineia.sales_orders_service.repository.OrderRepository;
@@ -24,8 +24,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
-        OrderResponseDTO response = orderService.processOrder(orderRequestDTO);
+    public ResponseEntity<OrderResponseProcessDTO> createOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
+        OrderResponseProcessDTO response = orderService.processOrder(orderRequestDTO);
         return ResponseEntity.ok(response);
     }
 

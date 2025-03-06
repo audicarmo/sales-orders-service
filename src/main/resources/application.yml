@@ -19,10 +19,16 @@ spring:
     show-sql: true
 
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     ignore-migration-patterns: "*:ignored"
     locations: classpath:db/migration
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
   logging:
     level:

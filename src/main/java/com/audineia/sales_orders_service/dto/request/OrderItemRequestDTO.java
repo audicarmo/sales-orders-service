@@ -2,15 +2,16 @@ package com.audineia.sales_orders_service.dto.request;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Data
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class OrderItemRequestDTO {
     private Long productId;
     private Integer quantity;
-    private Double value;
+    private BigDecimal value;
 
     public Long getProductId() {
         return productId;
@@ -20,7 +21,13 @@ public class OrderItemRequestDTO {
         return quantity;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
+    }
+
+    public OrderItemRequestDTO(Long productId, Integer quantity, BigDecimal value) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.value = value;
     }
 }
