@@ -31,4 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
->>>>>>> 69b02bc (chore: add initial project structure)
+
+
+.DS_Store
+src/.DS_Store
+src/main/.DS_Store
+
