@@ -1,5 +1,6 @@
 package com.audineia.sales_orders_service.controller;
 import com.audineia.sales_orders_service.dto.request.OrderRequestDTO;
+import com.audineia.sales_orders_service.dto.response.OrderResponseDTO;
 import com.audineia.sales_orders_service.dto.response.OrderResponseProcessDTO;
 import com.audineia.sales_orders_service.entity.Order;
 import com.audineia.sales_orders_service.enums.OrderStatus;

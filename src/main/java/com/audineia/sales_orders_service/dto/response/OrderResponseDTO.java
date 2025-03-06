@@ -1,10 +1,12 @@
 package com.audineia.sales_orders_service.dto.response;
 
+import com.audineia.sales_orders_service.entity.Order;
 import com.audineia.sales_orders_service.enums.OrderStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Getter
@@ -50,5 +52,18 @@ public class OrderResponseDTO {
         this.tax = tax;
         this.status = status;
         this.items = items;
+    }
+
+    public static OrderResponseDTO fromEntity(Order order) {
+        return new OrderResponseDTO(
+                order.getId(),
+                order.getOrderId(),
+                order.getCustomerId(),
+                order.getTax(),
+                order.getStatus(),
+                order.getItems().stream()
+                        .map(OrderItemResponseDTO::fromEntity)
+                        .collect(Collectors.toList())
+        );
     }
 }
